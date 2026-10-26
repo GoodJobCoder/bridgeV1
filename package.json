@@ -1,0 +1,25 @@
+{
+  "name": "bridge",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Bridge — Connecting Community Needs With Community Action",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@base44/sdk": "^0.8.57",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.0",
+    "vitest": "^2.1.8"
+  }
+}

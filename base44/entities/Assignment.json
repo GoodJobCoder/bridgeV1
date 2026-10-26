@@ -1,0 +1,21 @@
+{
+  "name": "Assignment",
+  "type": "object",
+  "properties": {
+    "opportunity_id": { "type": "string" },
+    "volunteer_id": { "type": "string" },
+    "organization_id": { "type": "string" },
+    "status": { "type": "string", "enum": ["interested", "confirmed", "completed", "declined", "withdrawn", "cancelled"], "default": "interested" },
+    "score_snapshot": { "type": "number", "description": "Compatibility score when the request was made (not a success probability)" },
+    "simulated": { "type": "boolean", "default": false, "description": "True when a demo profile or demo listing is involved" },
+    "requested_at": { "type": "string", "format": "date-time" },
+    "confirmed_at": { "type": "string", "format": "date-time" },
+    "org_note": { "type": "string", "description": "Private message from the organization to this volunteer" },
+    "background_check_verified_by_org": { "type": "boolean" },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "hours_verified": { "type": "number", "description": "Actual hours entered by the organization" },
+    "verified_by_org": { "type": "boolean", "default": false },
+    "verified_by_org_id": { "type": "string" }
+  },
+  "required": ["opportunity_id", "volunteer_id", "status"]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Opportunity",
+  "type": "object",
+  "properties": {
+    "organization_id": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "category": { "type": "string" },
+    "secondary_categories": { "type": "array", "items": { "type": "string" } },
+    "urgency": { "type": "string", "enum": ["low", "medium", "high", "critical"], "default": "medium" },
+    "required_skills": { "type": "array", "items": { "type": "string" } },
+    "preferred_skills": { "type": "array", "items": { "type": "string" } },
+    "schedule_slots": { "type": "array", "items": { "type": "string" } },
+    "schedule_mode": { "type": "string", "enum": ["any", "all"], "default": "any" },
+    "location": { "type": "string" },
+    "hours_per_session": { "type": "number" },
+    "capacity": { "type": "integer", "minimum": 1 },
+    "min_age": { "type": "integer", "default": 18 },
+    "supervised": { "type": "boolean", "default": true },
+    "serves_minors": { "type": "boolean", "default": false },
+    "requires_background_check": { "type": "boolean", "default": false },
+    "status": { "type": "string", "enum": ["open", "closed", "hidden"], "default": "open" },
+    "is_demo": { "type": "boolean", "default": false }
+  },
+  "required": ["organization_id", "title", "category", "capacity"]
+}

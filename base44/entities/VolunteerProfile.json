@@ -1,0 +1,14 @@
+{
+  "name": "VolunteerProfile",
+  "type": "object",
+  "properties": {
+    "display_name": { "type": "string", "description": "First name or nickname only; no contact details" },
+    "age_band": { "type": "string", "enum": ["14_15", "16_17", "18_20", "21_plus"] },
+    "background_check": { "type": "boolean", "default": false, "description": "Self-reported" },
+    "skills": { "type": "array", "items": { "type": "string" } },
+    "availability": { "type": "array", "items": { "type": "string" } },
+    "interests": { "type": "array", "items": { "type": "string" } },
+    "is_demo": { "type": "boolean", "default": false }
+  },
+  "required": ["display_name", "age_band"]
+}

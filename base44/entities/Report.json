@@ -1,0 +1,13 @@
+{
+  "name": "Report",
+  "type": "object",
+  "properties": {
+    "target_type": { "type": "string", "enum": ["opportunity", "organization"] },
+    "target_id": { "type": "string" },
+    "reason": { "type": "string" },
+    "details": { "type": "string" },
+    "status": { "type": "string", "enum": ["open", "resolved", "dismissed"], "default": "open" },
+    "resolution": { "type": "string" }
+  },
+  "required": ["target_type", "target_id", "reason"]
+}

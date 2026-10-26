@@ -1,0 +1,13 @@
+{
+  "name": "Organization",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "description": "Public organization name" },
+    "description": { "type": "string" },
+    "neighborhood": { "type": "string" },
+    "focus": { "type": "string" },
+    "verified": { "type": "boolean", "default": false, "description": "Only set true after real identity verification" },
+    "is_demo": { "type": "boolean", "default": false, "description": "Fictional demo record" }
+  },
+  "required": ["name"]
+}
