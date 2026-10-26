@@ -11,6 +11,10 @@ npm test         # unit tests for matching, workflow, and impact rules
 npm run build    # production build in dist/
 ```
 
+### Deploy (GitHub Pages)
+
+Every push to `main` runs `.github/workflows/deploy.yml`, which tests, builds, and publishes to https://goodjobcoder.github.io/bridgeV1/. One-time setup: in the repository go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**. If you rename the repository, update `base` in `vite.config.js`.
+
 With no configuration, the app stores data in the browser (localStorage) and loads fictional demo data on first visit, so the full flow works offline.
 
 ### Use Base44's database
