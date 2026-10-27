@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useData } from '../state/DataContext.jsx';
 import { computeImpact } from '../impact/metrics.js';
+import { computeSkillsGap } from '../impact/skillsGap.js';
+import { toCsv, serviceRecordRows, SERVICE_RECORD_HEADER, downloadCsv } from '../impact/exportCsv.js';
 import { PageHeader, StatCard, DemoBadge, EmptyState } from '../components/ui.jsx';
 
 const pct = (r) => `${Math.round(r * 100)}%`;
@@ -14,7 +16,7 @@ function Bar({ ratio, label }) {
 }
 
 export default function ImpactDashboard() {
-  const { Opportunity, Assignment, byId } = useData();
+  const { Opportunity, Assignment, VolunteerProfile, byId } = useData();
   const [scope, setScope] = useState('all');
 
   const { opps, asg } = useMemo(
@@ -28,6 +30,9 @@ export default function ImpactDashboard() {
   const completions = asg.filter((a) => a.status === 'completed' && a.verified_by_org).sort((a, b) => (b.completed_at ?? '').localeCompare(a.completed_at ?? ''));
 
   const showSim = scope === 'all';
+  const vols = scope === 'real' ? VolunteerProfile.filter((v) => !v.is_demo) : VolunteerProfile;
+  const gap = useMemo(() => computeSkillsGap(opps, vols, asg), [opps, vols, asg]);
+  const gapMax = Math.max(1, ...gap.map((g) => Math.max(g.demand, g.supply)));
 
   return (
     <>
@@ -44,7 +49,7 @@ export default function ImpactDashboard() {
           <h2 id="pipeline">Volunteer pipeline</h2>
           <div className="pipeline-grid">
             <div className="card pipeline-col">
-              <h3 className="h4">1 · Pending requests</h3>
+              <h3 className="h4">Pending requests</h3>
               <p className="hint">Volunteers expressed interest; organization has not decided.</p>
               <div className="stat-row">
                 <StatCard label="Real" value={m.real.pendingRequests} />
@@ -52,7 +57,7 @@ export default function ImpactDashboard() {
               </div>
             </div>
             <div className="card pipeline-col">
-              <h3 className="h4">2 · Pending commitments</h3>
+              <h3 className="h4">Pending commitments</h3>
               <p className="hint">Organization confirmed the volunteer; service not yet verified.</p>
               <div className="stat-row">
                 <StatCard label="Real" value={m.real.pendingCommitments} tone="tone-amber" />
@@ -60,7 +65,7 @@ export default function ImpactDashboard() {
               </div>
             </div>
             <div className="card pipeline-col">
-              <h3 className="h4">3 · Verified completions</h3>
+              <h3 className="h4">Verified completions</h3>
               <p className="hint">Organization attested the service happened and recorded actual hours.</p>
               <div className="stat-row">
                 <StatCard label="Real completions" value={m.real.verifiedCompletions} sub={`${m.real.verifiedHours} verified hours`} tone="tone-teal" />
@@ -112,8 +117,54 @@ export default function ImpactDashboard() {
           )}
         </section>
 
+        <section className="card" aria-labelledby="gap-heading">
+          <h2 id="gap-heading">Skills gap</h2>
+          <p className="muted">
+            Unfilled spots that require each skill, compared with how many volunteer profiles offer it. Organizations can use this to see which
+            volunteers to recruit.
+          </p>
+          {gap.length === 0 ? <EmptyState title="No open listings require specific skills." /> : (
+            <div className="table-wrap">
+              <table className="gap-table">
+                <caption className="sr-only">Skill demand compared with volunteer supply</caption>
+                <thead>
+                  <tr><th scope="col">Skill</th><th scope="col" className="num">Spots needing it</th><th scope="col" className="num">Volunteers with it</th><th scope="col">Demand vs. supply</th><th scope="col">Status</th></tr>
+                </thead>
+                <tbody>
+                  {gap.map((g) => (
+                    <tr key={g.skill}>
+                      <th scope="row">{g.skill}</th>
+                      <td className="num">{g.demand} <span className="muted small">({g.listings} listing{g.listings === 1 ? '' : 's'})</span></td>
+                      <td className="num">{g.supply}</td>
+                      <td>
+                        <div className="dual-bar" aria-hidden="true">
+                          <span className="demand" style={{ width: `${(g.demand / gapMax) * 100}%` }} />
+                          <span className="supply" style={{ width: `${(g.supply / gapMax) * 100}%` }} />
+                        </div>
+                      </td>
+                      <td>{g.gap > 0 ? <span className="tag tag-warn">Short by {g.gap}</span> : <span className="tag tag-ok">Covered</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="legend small"><span className="key demand" aria-hidden="true" /> Spots needing the skill <span className="key supply" aria-hidden="true" /> Volunteers offering it</p>
+            </div>
+          )}
+        </section>
+
         <section className="card" aria-labelledby="verified">
-          <h2 id="verified">Verified completion log</h2>
+          <div className="section-head">
+            <h2 id="verified">Verified completion log</h2>
+            {completions.length > 0 && (
+              <button
+                type="button"
+                className="btn btn-secondary btn-small"
+                onClick={() => downloadCsv('bridge-verified-service.csv', toCsv(SERVICE_RECORD_HEADER, serviceRecordRows(completions, byId)))}
+              >
+                Download CSV
+              </button>
+            )}
+          </div>
           {completions.length === 0 ? (
             <EmptyState title="No verified completions yet.">
               <p>Completions appear here only after an organization confirms a volunteer and later verifies the hours they actually served.</p>

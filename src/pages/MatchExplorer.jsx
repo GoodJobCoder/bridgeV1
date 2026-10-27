@@ -4,6 +4,7 @@ import { useData, useSessionValue } from '../state/DataContext.jsx';
 import { SKILLS, AVAILABILITY_SLOTS, CATEGORIES, AGE_BANDS } from '../config/taxonomy.js';
 import { rankOpportunities, WEIGHTS } from '../matching/index.js';
 import { STATUS_LABELS } from '../workflow/assignments.js';
+import { toCsv, serviceRecordRows, SERVICE_RECORD_HEADER, downloadCsv } from '../impact/exportCsv.js';
 import OpportunityCard from '../components/OpportunityCard.jsx';
 import ScoreBreakdown, { ScoreSummary } from '../components/ScoreBreakdown.jsx';
 import InterestButton from '../components/InterestButton.jsx';
@@ -18,9 +19,23 @@ function MyRequests({ volunteer }) {
   const [run, busy] = useAction();
   const mine = Assignment.filter((a) => a.volunteer_id === volunteer.id);
   if (!mine.length) return null;
+  const verified = mine.filter((a) => a.status === 'completed' && a.verified_by_org);
+  const hours = verified.reduce((s, a) => s + (Number(a.hours_verified) || 0), 0);
   return (
     <section className="card" aria-labelledby="my-requests">
       <h2 id="my-requests" className="h4">My requests</h2>
+      {verified.length > 0 && (
+        <div className="service-record">
+          <p><strong>{hours}</strong> verified hour{hours === 1 ? '' : 's'} across {verified.length} activit{verified.length === 1 ? 'y' : 'ies'}{volunteer.is_demo ? ' (simulated)' : ''}</p>
+          <button
+            type="button"
+            className="btn btn-secondary btn-small"
+            onClick={() => downloadCsv(`service-record-${volunteer.display_name.replace(/\W+/g, '-').toLowerCase()}.csv`, toCsv(SERVICE_RECORD_HEADER, serviceRecordRows(verified, byId)))}
+          >
+            Download service record (CSV)
+          </button>
+        </div>
+      )}
       <ul className="request-list">
         {mine.map((a) => {
           const o = byId.Opportunity.get(a.opportunity_id);
@@ -90,7 +105,7 @@ export default function MatchExplorer() {
         <div className="stack">
           <form className="card stack" onSubmit={save} aria-labelledby="profile-heading">
             <h2 id="profile-heading" className="h4">Your volunteer profile</h2>
-            {ready && <a href="#results-heading" className="jump-link">Jump to {ranked.length} ranked results ↓</a>}
+            {ready && <a href="#results-heading" className="jump-link">Skip to {ranked.length} results</a>}
             <label className="field">
               <span>Start from</span>
               <select value={volunteerId} onChange={(e) => setVolunteerId(e.target.value)}>

@@ -26,11 +26,7 @@ export function VerificationBadge({ organization }) {
 }
 
 export const UrgencyBadge = ({ urgency }) => (
-  <span className={`badge urgency-${urgency}`}>
-    <span className="sr-only">Urgency: </span>
-    {urgencyLabel(urgency)}
-    <span aria-hidden="true"> urgency</span>
-  </span>
+  <span className={`urgency urgency-${urgency}`}>{urgencyLabel(urgency)} urgency</span>
 );
 
 export function Chips({ items, variant = '', label }) {

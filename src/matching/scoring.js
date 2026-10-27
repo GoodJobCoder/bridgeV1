@@ -27,9 +27,9 @@ export function scoreSkills(volunteer, opportunity) {
   const points = round((earned / possible) * max);
 
   const details = [];
-  if (required.length) details.push(`Required skills: ${matchedRequired.length} of ${required.length} matched (×${SKILL_WEIGHT.required} weight each)`);
-  if (preferred.length) details.push(`Preferred skills: ${matchedPreferred.length} of ${preferred.length} matched (×${SKILL_WEIGHT.preferred} weight each)`);
-  details.push(`${earned} of ${possible} weighted skill points → ${points}/${max}`);
+  if (required.length) details.push(`Required: ${matchedRequired.length} of ${required.length} matched, weight ${SKILL_WEIGHT.required} each`);
+  if (preferred.length) details.push(`Helpful: ${matchedPreferred.length} of ${preferred.length} matched, weight ${SKILL_WEIGHT.preferred} each`);
+  details.push(`${earned} ÷ ${possible} × ${max} = ${points}`);
 
   return {
     points,
@@ -56,9 +56,9 @@ export function scoreAvailability(volunteer, opportunity) {
     max,
     summary: `${overlap.length} of ${needed.length} time slots overlap`,
     details: [
-      opportunity.schedule_mode === 'all' ? 'All listed slots are mandatory.' : 'Any one listed slot is enough; more overlap means more shift options.',
-      overlap.length ? `You are free: ${overlap.map(slotLabel).join(', ')}` : 'No overlapping slots.',
-      `${overlap.length}/${needed.length} × ${max} → ${points}/${max}`,
+      opportunity.schedule_mode === 'all' ? 'All listed slots are mandatory.' : 'Any one slot is enough; more overlap means more shift options.',
+      overlap.length ? `Free for: ${overlap.map(slotLabel).join(', ')}` : 'No overlapping slots.',
+      `${overlap.length} ÷ ${needed.length} × ${max} = ${points}`,
     ],
     matched: overlap,
   };
@@ -69,14 +69,14 @@ export function scoreInterests(volunteer, opportunity) {
   const interests = new Set(volunteer.interests ?? []);
   if (interests.has(opportunity.category)) {
     const points = round(max * INTEREST_SHARE.primaryCategory);
-    return { points, max, summary: `Matches your interest in ${opportunity.category}`, details: [`Primary category "${opportunity.category}" is one of your interests → ${points}/${max}`] };
+    return { points, max, summary: `Matches your interest in ${opportunity.category}`, details: [`Primary cause is one of yours: ${INTEREST_SHARE.primaryCategory * 100}% × ${max} = ${points}`] };
   }
   const secondary = (opportunity.secondary_categories ?? []).filter((c) => interests.has(c));
   if (secondary.length) {
     const points = round(max * INTEREST_SHARE.secondaryCategory);
-    return { points, max, summary: `Related to your interest in ${secondary.join(', ')}`, details: [`Secondary category match (${secondary.join(', ')}) earns ${INTEREST_SHARE.secondaryCategory * 100}% → ${points}/${max}`] };
+    return { points, max, summary: `Related to your interest in ${secondary.join(', ')}`, details: [`Related cause only: ${INTEREST_SHARE.secondaryCategory * 100}% × ${max} = ${points}`] };
   }
-  return { points: 0, max, summary: 'Outside your listed interests', details: [`Category "${opportunity.category}" is not in your interests → 0/${max}`] };
+  return { points: 0, max, summary: 'Outside your listed interests', details: [`“${opportunity.category}” is not one of your causes, so 0 points`] };
 }
 
 export function scoreOpportunity(volunteer, opportunity) {

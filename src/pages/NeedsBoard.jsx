@@ -110,7 +110,7 @@ export default function NeedsBoard() {
               <button type="button" className="btn btn-ghost" onClick={() => setF(initialFilters)}>Clear filters</button>
             </EmptyState>
           )}
-          <div className="card-grid">
+          <div className="listing-grid">
             {results.map((o) => (
               <OpportunityCard key={o.id} opportunity={o} organization={byId.Organization.get(o.organization_id)} assignments={Assignment}>
                 {volunteer ? (

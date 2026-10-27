@@ -29,13 +29,13 @@ Both storage backends expose the same `list / filter / get / create / update / d
 
 | Route | Page |
 | --- | --- |
-| `/` | Home dashboard: snapshot stats, most urgent needs, navigation |
+| `/` | Home: live figures (open needs, unfilled spots, verified hours), the least-covered needs, and a summary of how scoring works |
 | `/needs` | Community Needs Board: search and filter by category, urgency, skill, and availability |
-| `/match` | Volunteer Match Explorer: enter a profile and get ranked, explained matches |
+| `/match` | Volunteer Match Explorer: enter a profile and get ranked matches with a points table for every score; download a CSV service record of verified hours |
 | `/organizations` | Organization Dashboard: post and edit listings, approve or decline requests, verify completions |
-| `/impact` | Impact Dashboard: pending requests, pending commitments, verified completions, and coverage |
+| `/impact` | Impact Dashboard: pending requests, pending commitments, verified completions, coverage, a skills-gap table (unfilled spots needing each skill vs. volunteers who have it), and a CSV export of the verified log |
 | `/moderation` | Moderation queue for reported listings |
-| `/how-it-works` | Plain-language explanation of every rule and weight, plus demo data controls |
+| `/how-it-works` | Algorithm trace (pick any volunteer and listing to see each eligibility rule pass or fail and the score arithmetic, from the same code the app uses), every rule and weight, links to the source files, and demo data controls |
 
 ## Project layout (where the logic lives)
 

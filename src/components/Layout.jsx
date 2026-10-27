@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useData } from '../state/DataContext.jsx';
+import { REPO_URL } from '../config/project.js';
 
 const NAV = [
   { to: '/', label: 'Home', end: true },
@@ -49,15 +50,11 @@ export default function Layout({ children }) {
       <header className="site-header">
         <div className="container header-inner">
           <Link to="/" className="brand" aria-label="Bridge home">
-            <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true">
-              <rect width="32" height="32" rx="7" fill="#14b8a6" />
-              <path d="M5 22 Q16 6 27 22" stroke="#0b2545" strokeWidth="3" fill="none" />
-              <path d="M5 22h22M10 22v-5M16 22v-8M22 22v-5" stroke="#fff" strokeWidth="2" />
+            <svg width="30" height="20" viewBox="0 0 30 20" aria-hidden="true">
+              <path d="M1 18 C8 3, 22 3, 29 18" stroke="currentColor" strokeWidth="2.5" fill="none" />
+              <path d="M1 18h28M8 18v-6.5M15 18V8.5M22 18v-6.5" stroke="currentColor" strokeWidth="2" />
             </svg>
-            <span className="brand-text">
-              <strong>Bridge</strong>
-              <small>Community needs ↔ community action</small>
-            </span>
+            <span className="brand-name">Bridge</span>
           </Link>
           <button
             type="button"
@@ -66,8 +63,7 @@ export default function Layout({ children }) {
             aria-controls="primary-nav"
             onClick={() => setMenuOpen((o) => !o)}
           >
-            <span className="sr-only">{menuOpen ? 'Close' : 'Open'} navigation menu</span>
-            <span aria-hidden="true">{menuOpen ? '✕' : '☰'}</span>
+            {menuOpen ? 'Close' : 'Menu'}
           </button>
           <nav id="primary-nav" aria-label="Primary" className={menuOpen ? 'open' : ''}>
             <ul>
@@ -83,10 +79,8 @@ export default function Layout({ children }) {
 
       <div className="demo-banner" role="note">
         <div className="container">
-          <strong>Demo mode:</strong> records marked <span className="badge badge-demo">Demo</span> are fictional organizations and volunteers.
-          Organizations are <strong>unverified</strong> unless marked otherwise. No login is required in this build, so you can switch between
-          volunteer and organization views.
-          {backend === 'local' && ' Data is saved in this browser.'}
+          <span className="badge badge-demo">Demo</span> Records marked Demo are fictional. This build has no login, so you can switch
+          between volunteer and organization views. <Link to="/how-it-works#demo">About the demo</Link>
         </div>
       </div>
 
@@ -102,16 +96,17 @@ export default function Layout({ children }) {
 
       <footer className="site-footer">
         <div className="container footer-inner">
-          <p>
-            <strong>Bridge</strong> — Connecting Community Needs With Community Action.
-          </p>
-          <p className="muted">
-            Compatibility scores describe how well a listing fits a stated profile. They are not predictions of success.
-            Hours appear only after an organization verifies completion.
-          </p>
-          <p>
-            <Link to="/moderation">Moderation queue</Link> · <Link to="/how-it-works#demo">Demo data controls</Link> ·{' '}
-            <span className="muted">Storage: {backend === 'base44' ? 'Base44 database' : 'browser (offline demo)'}</span>
+          <div>
+            <p className="footer-name">Bridge</p>
+            <p>Connecting community needs with community action.</p>
+          </div>
+          <ul className="footer-links">
+            <li><Link to="/how-it-works">How matching works</Link></li>
+            <li><Link to="/moderation">Moderation queue</Link></li>
+            <li><a href={REPO_URL}>Source code</a></li>
+          </ul>
+          <p className="footer-meta">
+            Data storage: {backend === 'base44' ? 'Base44 database' : 'this browser (offline demo)'}
           </p>
         </div>
       </footer>
